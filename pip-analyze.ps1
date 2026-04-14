@@ -1,7 +1,7 @@
 <#
 ==============================================================
  Script: Python Package Size Analyzer
- Versão: 1.2
+ Versão: 1.2.1
  Autor: Guterman Junior
  Data: 2026-04-14
 
@@ -43,6 +43,14 @@
  - Exportação (CSV / JSON)
  - Top N maiores pacotes
  - Melhor feedback operacional
+
+--------------------------------------------------------------
+ NOVIDADES v1.2.1
+
+ - Correção do parsing do `pip-size`
+   (compatibilidade com novo formato de output)
+ - Evita retornos "N/A" incorretos
+ - Melhoria de robustez na extração de tamanho
 
 --------------------------------------------------------------
  DEPENDÊNCIAS
@@ -130,6 +138,39 @@ function Get-EnvironmentHash {
     return (Get-FileHash -InputStream $stream).Hash
 }
 
+        # ============================================
+        # FUNÇÃO: Extrair tamanho robusto do pip-size
+        # (v1.2.1 FIX)
+        # ============================================
+function Get-PackageSize-Robust {
+    param([string]$package)
+
+    try {
+        $output = pip-size $package 2>$null
+
+        if (-not $output) {
+            return "N/A"
+        }
+
+        if ($output -isnot [System.Array]) {
+            $output = $output -split "`n"
+        }
+
+        foreach ($line in $output) {
+
+            # 🔥 pega linha principal do pacote
+            if ($line -match "^.*$package==.*?([\d\.]+\s*(KB|MB|GB))") {
+                return "$($matches[1])"
+            }
+        }
+
+        return "N/A"
+    }
+    catch {
+        return "N/A"
+    }
+}
+
 # ============================================================
 # VALIDAÇÃO
 # ============================================================
@@ -206,7 +247,7 @@ Write-Host ""
 # INICIALIZAÇÃO
 # ============================================================
 
-$pips = pip list --format=freeze
+$pips = python -m pip list --format=freeze
 $total = $pips.Count
 $current = 0
 $startTime = Get-Date
@@ -274,12 +315,11 @@ foreach ($line in $pips) {
     }
     else {
         try {
-            $output = & pip-size $name 2>&1 | Out-String
-            $match = $sizeRegex.Match($output)
+            # 🔥 v1.2.1 FIX: uso do parser robusto
+            $size = Get-PackageSize-Robust $name
 
-            if ($match.Success) {
-                $size = $match.Value
-                if ($UseCache) { $cache[$name] = $size }
+            if ($UseCache -and $size -ne "N/A") {
+                $cache[$name] = $size
             }
         } catch {
             $size = "ERR"
