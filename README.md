@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-`pip-analyzer` is a PowerShell-based tool designed to analyze the size of Python packages installed in your environment.
+`pip-analyzer` is a PowerShell-based tool designed to analyze the size of Python packages installed in your environment (venv or global).
 
 It provides:
 
@@ -14,48 +14,64 @@ It provides:
 - 📦 Package size analysis using `pip-size`
 - ⚡ Smart caching based on environment state
 - 🧠 Insight into dependency impact
-- 🖥️ CLI and interactive modes
+- 🖥️ Dual interface: interactive and CLI
+
+---
+
+## 🆕 Release v1.2.0
+
+Initial release of **pip-analyzer** as a standalone tool.
+
+This version evolves the original script into a reusable and extensible solution, focusing on:
+
+- Developer experience (DX)
+- Observability
+- Performance awareness
 
 ---
 
 ## ✨ Features
 
-- 🔎 Analyze installed Python packages (`pip list`)
-- 📏 Measure package sizes (`pip-size`)
-- 📈 Real-time metrics:
+- 📦 Analyze installed Python packages (`pip list`)
+- 📏 Calculate package sizes using `pip-size`
+- 📊 Real-time progress with performance metrics:
   - Instant speed (Inst)
   - Average speed (Avg)
   - Moving average (Mov)
-- 🧾 Sorting options:
-  - Name
-  - Size
-  - Original order
-- 🧠 Smart cache (based on `pip freeze`)
+- 🧾 Flexible sorting options:
+  - Name (alphabetical)
+  - Size (descending)
+  - Original order (`pip list`)
+- 🧠 Smart cache based on environment state (`pip freeze`)
+- 🖥️ Dual interface:
+  - Interactive mode (guided prompts)
+  - CLI mode (automation-friendly)
+- 🏆 Top N largest packages (quick impact view)
 - 📤 Export results:
   - CSV
   - JSON
-- 🏆 Top N largest packages
 
 ---
 
-## 🧠 How Smart Cache Works
+## 🧠 Smart Cache
 
 The cache system is based on the **state of your Python environment**.
 
-### 🔍 Process
+### 🔍 How it works
 
-1. Captures environment using:
+1. Captures the environment snapshot:
+
    ```bash
    pip freeze
    ```
 
-2. Generates a hash from this state
+2. Generates a hash from this snapshot
 
-3. Uses the hash as a cache key
+3. Uses this hash as a cache key
 
 ---
 
-### 🎯 Result
+### 🎯 Behavior
 
 | Scenario            | Behavior        |
 |--------------------|----------------|
@@ -65,17 +81,14 @@ The cache system is based on the **state of your Python environment**.
 
 ---
 
-## 📦 Requirements
+### 💡 Why this matters
 
-- Python 3.x
-- pip
-- pip-size
+Traditional caching can become inconsistent when dependencies change.
 
-Install dependency:
-
-```bash
-pip install pip-size
-```
+This approach guarantees:
+- correctness
+- reproducibility
+- performance
 
 ---
 
@@ -107,13 +120,13 @@ pip install pip-size
 
 ## ⚙️ Parameters
 
-| Parameter   | Description |
-|------------|------------|
-| `-Sort`    | Name / Size / Original |
-| `-Top`     | Top N largest packages |
-| `-UseCache`| Enable smart cache |
-| `-FastMode`| Skip size calculation |
-| `-Export`  | csv / json |
+| Parameter    | Description |
+|-------------|------------|
+| `-Sort`     | Name / Size / Original |
+| `-Top`      | Top N largest packages |
+| `-UseCache` | Enable smart cache |
+| `-FastMode` | Skip size calculation (debug mode) |
+| `-Export`   | csv / json |
 
 ---
 
@@ -129,22 +142,37 @@ requests     2.31.0     1.2 MB
 
 ---
 
+## 📦 Requirements
+
+- Python 3.x
+- pip
+- pip-size
+
+Install dependency:
+
+```bash
+pip install pip-size
+```
+
+---
+
 ## ⚠️ Limitations
 
-- `pip-size` can be slow (network/cache dependent)
-- Size is not deduplicated across dependencies
+- Depends on `pip-size` performance (network/cache dependent)
+- No dependency deduplication (sizes may overlap)
 - Represents package distribution size (wheel), not actual disk usage
-- Execution is sequential (no parallelism yet)
+- Sequential execution (no parallelism yet)
 
 ---
 
 ## 🛠️ Tech Details
 
 - PowerShell 7+
-- Regex-based parsing
+- Regex-based parsing (tolerant approach)
 - UTF-8 encoding handling
 - Real-time terminal rendering (`Write-Progress`)
-- Optimized collections (List<T>)
+- Optimized collections (List<T>) to avoid O(n²)
+- Environment-based caching strategy
 
 ---
 
@@ -153,7 +181,8 @@ requests     2.31.0     1.2 MB
 - ⚡ Parallel processing (multi-threaded)
 - 📊 Visualization (charts / dashboards)
 - 🔍 Dependency tree analysis
-- 🧠 Smarter caching strategies
+- 🧠 Advanced caching strategies
+- 🌍 Cross-platform CLI (beyond PowerShell)
 
 ---
 
