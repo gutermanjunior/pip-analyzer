@@ -1,0 +1,2 @@
+#!/usr/bin/env pwsh
+pwsh "$(dirname "$0")/pip-analyze.ps1" "$@"

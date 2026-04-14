@@ -221,7 +221,9 @@ $totalSizeKB = 0
 # CACHE
 # ============================================================
 
-$cacheFile = "pip-size-cache-v2.json"
+$cacheDir = "$env:LOCALAPPDATA\pip-analyzer"
+New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+$cacheFile = "$cacheDir\cache.json"
 $cacheData = @{}
 $cache = @{}
 
