@@ -1,4 +1,4 @@
-# 📦 pip-analyzer (repository: pip-analyzer)
+# 📦 pip-analyzer
 
 > 🔍 Python package size analyzer with real-time metrics, smart caching, and CLI support.
 
