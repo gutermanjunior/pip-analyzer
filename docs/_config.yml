@@ -1,0 +1,12 @@
+title: pip-analyzer
+description: Analyze Python package sizes using pip-size
+theme: jekyll-theme-primer
+
+markdown: kramdown
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true
